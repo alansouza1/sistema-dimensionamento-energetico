@@ -2,8 +2,8 @@
 
 > **FIAP — Soluções em Energias Renováveis e Sustentáveis (SERS)**  
 > **Integrantes:**
-> - Alan Junio Araujo de Souza (RM: 574112)
-> - Gustavo Zibini Belizario (RM: 561376)
+> - Alan Junio Araujo de Souza
+> - Gustavo Zibini Belizario
 
 ---
 
