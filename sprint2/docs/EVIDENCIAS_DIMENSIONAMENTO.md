@@ -38,9 +38,12 @@ Na **Sprint 2 (CP2)**, essa base foi estendida de ponta a ponta sem isolamento d
     $$P_{instalada} = \frac{N \times P_{m\acute{o}dulo}}{1000} \text{ [kWp]}$$
 
 ### 2.2. Critério Técnico de Seleção e Validação do Inversor
-A seleção do inversor não se baseia estritamente em menor preço:
+A seleção do inversor não se baseia estritamente em menor preço. O algoritmo aplica **cinco filtros técnicos** antes de ordenar por custo:
 1. **Compatibilidade com Bateria:** Caso o cliente solicite armazenamento, o sistema filtra **estritamente inversores com `compativel_bateria = true` (Inversores Híbridos)**.
 2. **Capacidade de Potência e Overload (FDI):** O inversor deve operar dentro de limites seguros de sobredimensionamento de módulos (FDI até 1.40x, ou seja, $P_{nominal} \times 1.40 \ge P_{instalada}$ e $P_{max\_fv} \ge P_{instalada} \times 0.95$).
+3. **Faixa de Tensão MPPT:** A tensão de operação do módulo ($V_{mp}$) deve estar dentro da faixa MPPT do inversor ($V_{mp} \ge faixa\_mppt\_min$ e $V_{mp} \le faixa\_mppt\_max$).
+4. **Tensão Máxima de Entrada:** A tensão de circuito aberto do módulo ($V_{oc}$) não deve exceder a tensão máxima de entrada do inversor ($V_{oc} \le tensao\_max\_entrada$).
+5. **Corrente Máxima de Entrada:** A corrente de curto-circuito do módulo ($I_{sc}$) não deve exceder a corrente máxima suportada pelo inversor ($I_{sc} \le corrente\_max\_entrada$).
 
 ### 2.3. Dimensionamento de Armazenamento por Baterias (Opcional)
 *   **Consumo Médio Diário ($E_d$):**

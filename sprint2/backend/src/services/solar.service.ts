@@ -138,16 +138,26 @@ export class SolarService {
         return false;
       }
       // Critério técnico de compatibilidade:
-      // O inversor deve suportar a potência instalada com sobrecarga máxima de 40% (FDI >= 0.71)
-      // e potência nominal adequada
+      // 1. Potência: O inversor deve suportar a potência instalada com sobrecarga máxima de 40% (FDI >= 0.71)
       const atendePotenciaMin = inv.potencia_nominal_w * 1.40 >= potenciaInstaladaW;
       const atendePotenciaMax = inv.potencia_max_fv_w >= potenciaInstaladaW * 0.95;
-      return atendePotenciaMin && atendePotenciaMax;
+
+      // 2. Tensão MPPT: A tensão de operação dos módulos (Vmp) deve caber na faixa MPPT do inversor
+      const vmpArranjo = moduloEscolhido.vmp_v; // série mínima de 1 módulo
+      const vocArranjo = moduloEscolhido.voc_v;
+      const atendeVmpMppt = vmpArranjo >= inv.faixa_mppt_min_v && vmpArranjo <= inv.faixa_mppt_max_v;
+      const atendeVocMax = vocArranjo <= inv.tensao_max_entrada_v;
+
+      // 3. Corrente: A corrente de curto-circuito dos módulos não deve exceder o máximo do inversor
+      const atendeCorrMax = moduloEscolhido.isc_a <= inv.corrente_max_entrada_a;
+
+      return atendePotenciaMin && atendePotenciaMax && atendeVmpMppt && atendeVocMax && atendeCorrMax;
     });
 
     if (inversoresCandidatos.length === 0) {
-      // Fallback: busca inversor com a potência mais próxima
-      inversoresCandidatos = inversores.filter(inv => !comArmazenamento || inv.compativel_bateria)
+      // Fallback: relaxa critérios MPPT mas mantém compatibilidade de potência mínima e bateria
+      inversoresCandidatos = inversores
+        .filter(inv => (!comArmazenamento || inv.compativel_bateria) && inv.potencia_max_fv_w >= potenciaInstaladaW * 0.80)
         .sort((a, b) => Math.abs(a.potencia_nominal_w - potenciaInstaladaW) - Math.abs(b.potencia_nominal_w - potenciaInstaladaW));
     }
 
