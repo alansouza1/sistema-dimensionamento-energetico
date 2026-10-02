@@ -1,17 +1,14 @@
 # Dependencies
 node_modules/
-backend/node_modules/
-frontend/node_modules/
+**/node_modules/
 
 # Production builds
 dist/
-backend/dist/
-frontend/dist/
+**/dist/
 
 # Environment variables
 .env
-backend/.env
-frontend/.env
+**/.env
 *.env.local
 
 # SQLite databases
@@ -19,8 +16,8 @@ frontend/.env
 *.sqlite-journal
 *.sqlite-wal
 *.sqlite-shm
-backend/*.sqlite
-backend/*.sqlite-journal
+**/*.sqlite
+**/*.sqlite-journal
 
 # Logs
 *.log
