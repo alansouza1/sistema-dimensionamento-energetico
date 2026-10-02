@@ -1,0 +1,13 @@
+id,fabricante,modelo,potencia_wp,voc_v,isc_a,vmp_v,imp_a,eficiencia_pct,preco_brl,fornecedor,data_coleta,url_fonte
+MOD001,Canadian Solar,CS6W-550MS HiKu6,550,49.60,14.00,41.70,13.20,21.30,789.00,Minha Casa Solar,2026-10-02,https://www.minhacasasolar.com.br/painel-solar-550w-canadian
+MOD002,Canadian Solar,CS7N-660MS HiKu7,660,45.60,18.52,38.30,17.24,21.20,980.00,Portal Solar,2026-10-02,https://loja.portalsolar.com.br/painel-canadian-660w
+MOD003,Jinko Solar,Tiger Pro JKM545M-72HL4-V,545,49.52,13.94,40.80,13.36,21.13,769.00,NeoSolar,2026-10-02,https://www.neosolar.com.br/painel-solar-jinko-545w
+MOD004,Jinko Solar,Tiger Neo N-Type JKM580N-72HL4,580,51.48,14.28,42.84,13.54,22.45,860.00,NeoSolar,2026-10-02,https://www.neosolar.com.br/painel-solar-jinko-580w
+MOD005,Trina Solar,Vertex TSM-DE19 550W,550,37.90,18.52,31.60,17.40,21.00,795.00,Aldo Solar,2026-10-02,https://www.aldosolar.com.br/modulo-trina-550w
+MOD006,Trina Solar,Vertex TSM-DE21 665W,665,46.10,18.45,38.30,17.37,21.40,990.00,Aldo Solar,2026-10-02,https://www.aldosolar.com.br/modulo-trina-665w
+MOD007,Longi Solar,Hi-MO 5 LR5-72HPH-545M,545,49.65,13.92,41.80,13.04,21.30,775.00,Minha Casa Solar,2026-10-02,https://www.minhacasasolar.com.br/modulo-longi-545w
+MOD008,Longi Solar,Hi-MO 6 LR5-72HTH-580M,580,52.06,14.19,43.61,13.30,22.50,870.00,Portal Solar,2026-10-02,https://loja.portalsolar.com.br/painel-longi-580w
+MOD009,JA Solar,JAM72S30-545/MR,545,49.75,13.93,41.80,13.04,21.10,760.00,NeoSolar,2026-10-02,https://www.neosolar.com.br/painel-solar-ja-solar-545w
+MOD010,JA Solar,DeepBlue 4.0 JAM72D40-575/MB,575,51.03,14.30,42.44,13.55,22.30,850.00,Minha Casa Solar,2026-10-02,https://www.minhacasasolar.com.br/painel-ja-solar-575w
+MOD011,Risen Energy,Titan RSM110-8-550M,550,37.84,18.48,31.60,17.41,21.00,780.00,Portal Solar,2026-10-02,https://loja.portalsolar.com.br/painel-risen-550w
+MOD012,DAH Solar,DHP-72X10/FS-550W,550,50.10,13.98,42.10,13.06,21.28,770.00,Aldo Solar,2026-10-02,https://www.aldosolar.com.br/painel-dah-solar-550w

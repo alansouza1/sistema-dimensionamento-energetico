@@ -1,0 +1,11 @@
+id,fabricante,modelo,tipo,potencia_nominal_w,potencia_max_fv_w,tensao_max_entrada_v,faixa_mppt_min_v,faixa_mppt_max_v,corrente_max_entrada_a,numero_mppt,compativel_bateria,preco_brl,fornecedor,data_coleta,url_fonte
+INV001,Growatt,MIN 3000TL-X,String On-Grid,3000,4200,500,50,500,13.5,2,nao,2890.00,Minha Casa Solar,2026-10-02,https://www.minhacasasolar.com.br/inversor-growatt-3000tl-x
+INV002,Growatt,MIN 5000TL-X,String On-Grid,5000,7000,550,80,550,13.5,2,nao,3990.00,Minha Casa Solar,2026-10-02,https://www.minhacasasolar.com.br/inversor-growatt-5000tl-x
+INV003,Growatt,MIN 6000TL-X,String On-Grid,6000,8100,550,80,550,13.5,2,nao,4490.00,NeoSolar,2026-10-02,https://www.neosolar.com.br/inversor-growatt-6000tl-x
+INV004,Deye,SUN-5K-SG03LP1-EU,Hibrido,5000,6500,500,125,425,13.0,2,sim,8990.00,NeoSolar,2026-10-02,https://www.neosolar.com.br/inversor-hibrido-deye-5kw
+INV005,Deye,SUN-8K-SG01LP1-EU,Hibrido,8000,10400,500,125,425,22.0,2,sim,12450.00,Portal Solar,2026-10-02,https://loja.portalsolar.com.br/inversor-hibrido-deye-8kw
+INV006,Fronius,Primo 5.0-1,String On-Grid,5000,7500,1000,80,800,18.0,2,nao,6890.00,Aldo Solar,2026-10-02,https://www.aldosolar.com.br/inversor-fronius-primo-5kw
+INV007,Fronius,Primo GEN24 6.0 Plus,Hibrido,6000,9000,1000,65,800,22.0,2,sim,14200.00,Aldo Solar,2026-10-02,https://www.aldosolar.com.br/inversor-fronius-gen24-6kw
+INV008,Sungrow,SG5.0RS,String On-Grid,5000,7500,600,40,560,16.0,2,nao,4150.00,Portal Solar,2026-10-02,https://loja.portalsolar.com.br/inversor-sungrow-5kw
+INV009,GoodWe,GW5000D-NS,String On-Grid,5000,6500,600,80,550,11.0,2,nao,3800.00,Minha Casa Solar,2026-10-02,https://www.minhacasasolar.com.br/inversor-goodwe-5kw
+INV010,GoodWe,GW5048D-ES,Hibrido,5000,6500,580,125,550,11.0,2,sim,8450.00,NeoSolar,2026-10-02,https://www.neosolar.com.br/inversor-hibrido-goodwe-5kw
