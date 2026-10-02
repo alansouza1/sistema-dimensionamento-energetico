@@ -334,7 +334,7 @@ function DashboardContent() {
                   className="mt-4 w-full py-2.5 px-4 rounded-xl text-xs font-bold text-slate-900 bg-amber-400 hover:bg-amber-300 transition-colors flex items-center justify-center gap-2 shadow-md shadow-amber-400/20"
                 >
                   <SunMedium className="w-4 h-4 text-slate-900" />
-                  Simular Planta Solar (Sprint 2)
+                  Simular Planta Solar
                 </button>
               </div>
             </div>

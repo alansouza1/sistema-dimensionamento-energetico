@@ -85,11 +85,8 @@ export const SolarModal: React.FC<SolarModalProps> = ({
               <Sun className="w-6 h-6 animate-spin-slow" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-900">
                 Dimensionamento de Sistema Fotovoltaico
-                <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-amber-100 text-amber-800 border border-amber-200">
-                  Sprint 2
-                </span>
               </h3>
               <p className="text-xs text-slate-500">
                 Imóvel: <span className="font-semibold text-slate-700">{property.identificacao}</span> — Referência: {consumoReferencia.toFixed(1)} kWh/mês
@@ -232,8 +229,20 @@ export const SolarModal: React.FC<SolarModalProps> = ({
 
           {proposta && (
             <div className="space-y-6">
-              {/* KPI Cards */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+              {/* KPI Cards — Section 12 required output */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+                <div className="p-4 rounded-2xl bg-slate-100/70 border border-slate-200/80">
+                  <div className="text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">
+                    Consumo de Referência
+                  </div>
+                  <div className="text-xl sm:text-2xl font-black text-slate-900">
+                    {proposta.consumo_referencia_kwh} <span className="text-xs font-normal">kWh/mês</span>
+                  </div>
+                  <div className="text-[10px] text-slate-500 mt-1">
+                    Média mensal do histórico (Sprint 1)
+                  </div>
+                </div>
+
                 <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80">
                   <div className="text-[11px] font-semibold text-amber-800 uppercase tracking-wider mb-1">
                     Geração Pretendida
@@ -254,7 +263,7 @@ export const SolarModal: React.FC<SolarModalProps> = ({
                     {proposta.potencia_instalada_kwp} <span className="text-xs font-normal">kWp</span>
                   </div>
                   <div className="text-[10px] text-emerald-700 mt-1">
-                    Mínimo calculado: {proposta.potencia_fv_necessaria_kwp} kWp
+                    Necessário: {proposta.potencia_fv_necessaria_kwp} kWp
                   </div>
                 </div>
 
@@ -266,21 +275,29 @@ export const SolarModal: React.FC<SolarModalProps> = ({
                     {proposta.geracao_estimada_mensal_kwh} <span className="text-xs font-normal">kWh/mês</span>
                   </div>
                   <div className="text-[10px] text-blue-700 mt-1">
-                    HSP: {proposta.hsp} h/dia (PR: 78%)
+                    HSP: {proposta.hsp} h/dia · PR: 78%
                   </div>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-purple-50/70 border border-purple-200/80">
                   <div className="text-[11px] font-semibold text-purple-800 uppercase tracking-wider mb-1">
-                    Investimento Estimado
+                    Investimento Total
                   </div>
                   <div className="text-xl sm:text-2xl font-black text-purple-900">
                     R$ {proposta.orcamento.custo_total_estimado_brl.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </div>
                   <div className="text-[10px] text-purple-700 mt-1">
-                    Equipamentos + BOS e Instalação
+                    Equipamentos + Instalação
                   </div>
                 </div>
+              </div>
+
+              {/* HSP Source */}
+              <div className="px-4 py-2.5 rounded-xl bg-blue-50 border border-blue-200/80 text-xs text-blue-800 flex items-center gap-2">
+                <Info className="w-4 h-4 text-blue-500 shrink-0" />
+                <span>
+                  <strong>Recurso Solar (HSP):</strong> {proposta.hsp} kWh/m²/dia — Fonte: {proposta.origem_hsp}
+                </span>
               </div>
 
               {/* Equipamentos Selecionados */}
@@ -344,7 +361,7 @@ export const SolarModal: React.FC<SolarModalProps> = ({
                   </div>
 
                   {/* Baterias (se houver) */}
-                  {proposta.armazenamento.incluido && proposta.armazenamento.equipamento && (
+                  {proposta.armazenamento.incluido && proposta.armazenamento.equipamento ? (
                     <div className="p-4 rounded-2xl border border-emerald-200 bg-emerald-50/30 shadow-xs md:col-span-2">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-bold text-emerald-800 uppercase flex items-center gap-1.5">
@@ -368,6 +385,14 @@ export const SolarModal: React.FC<SolarModalProps> = ({
                           <p>Capacidade Instalada: <span className="font-semibold text-slate-800">{proposta.armazenamento.capacidade_instalada_kwh} kWh</span></p>
                           <p>Subtotal Baterias: <span className="font-bold text-emerald-900">R$ {proposta.orcamento.custo_baterias_brl.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></p>
                         </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 shadow-xs md:col-span-2 flex items-center gap-3">
+                      <Shield className="w-5 h-5 text-slate-400 shrink-0" />
+                      <div>
+                        <p className="text-xs font-bold text-slate-700">Armazenamento por Baterias: Não incluído</p>
+                        <p className="text-[11px] text-slate-500">Sistema Grid-Tie puro — energia excedente injetada na rede (compensação de créditos).</p>
                       </div>
                     </div>
                   )}
