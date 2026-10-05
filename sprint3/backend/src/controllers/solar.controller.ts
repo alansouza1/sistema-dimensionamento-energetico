@@ -27,7 +27,7 @@ export class SolarController {
         return;
       }
 
-      const { property_id, hsp, percentual_atendimento, com_armazenamento, horas_autonomia, modulo_id, inversor_id, bateria_id, origem_hsp } = req.body;
+      const { property_id, hsp, pr, percentual_atendimento, com_armazenamento, horas_autonomia, modulo_id, inversor_id, bateria_id, origem_hsp } = req.body;
 
       if (!property_id) {
         res.status(400).json({ error: 'O ID do imóvel (property_id) é obrigatório.' });
@@ -37,6 +37,7 @@ export class SolarController {
       const proposta = SolarService.dimensionar(userId, {
         property_id: Number(property_id),
         hsp: hsp !== undefined && hsp !== '' ? Number(hsp) : undefined,
+        pr: pr !== undefined && pr !== '' ? Number(pr) : undefined,
         percentual_atendimento: percentual_atendimento !== undefined && percentual_atendimento !== '' ? Number(percentual_atendimento) : undefined,
         com_armazenamento: Boolean(com_armazenamento),
         horas_autonomia: horas_autonomia !== undefined && horas_autonomia !== '' ? Number(horas_autonomia) : undefined,
@@ -60,7 +61,7 @@ export class SolarController {
         return;
       }
 
-      const { property_id, hsp, percentual_atendimento, com_armazenamento, horas_autonomia, modulo_id, inversor_id, bateria_id, origem_hsp, tarifa_kwh } = req.body;
+      const { property_id, hsp, pr, percentual_atendimento, com_armazenamento, horas_autonomia, modulo_id, inversor_id, bateria_id, origem_hsp, tarifa_kwh } = req.body;
 
       if (!property_id) {
         res.status(400).json({ error: 'O ID do imóvel (property_id) é obrigatório.' });
@@ -70,6 +71,7 @@ export class SolarController {
       const proposta = SolarService.dimensionarComparativo(userId, {
         property_id: Number(property_id),
         hsp: hsp !== undefined && hsp !== '' ? Number(hsp) : undefined,
+        pr: pr !== undefined && pr !== '' ? Number(pr) : undefined,
         percentual_atendimento: percentual_atendimento !== undefined && percentual_atendimento !== '' ? Number(percentual_atendimento) : undefined,
         com_armazenamento: Boolean(com_armazenamento),
         horas_autonomia: horas_autonomia !== undefined && horas_autonomia !== '' ? Number(horas_autonomia) : undefined,
@@ -94,13 +96,15 @@ export class SolarController {
         return;
       }
 
-      const { property_id, proposta } = req.body;
-      if (!property_id || !proposta) {
+      const { property_id } = req.body;
+      const propostaData = req.body.proposta || req.body.dados_completos;
+
+      if (!property_id || !propostaData) {
         res.status(400).json({ error: 'ID do imóvel e dados da proposta são obrigatórios.' });
         return;
       }
 
-      const id = SolarService.salvarProposta(userId, Number(property_id), proposta);
+      const id = SolarService.salvarProposta(userId, Number(property_id), propostaData);
       res.status(201).json({ id, message: 'Proposta salva com sucesso.' });
     } catch (error: any) {
       res.status(400).json({ error: error.message || 'Erro ao salvar proposta.' });

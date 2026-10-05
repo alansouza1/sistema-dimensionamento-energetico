@@ -440,23 +440,31 @@ export const SolarModal: React.FC<SolarModalProps> = ({
               <div className="p-4 rounded-2xl bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200/80">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-blue-600 text-white shadow-xs">
+                    <div className="p-2.5 rounded-xl bg-blue-600 text-white shadow-xs">
                       <BarChart3 className="w-5 h-5" />
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-slate-900">
-                        Comparativo Técnico e Financeiro: On-Grid vs Híbrido com Baterias
+                        Comparativo Técnico e Financeiro: On-Grid vs Híbrido com Baterias (PB14)
                       </h4>
-                      <p className="text-xs text-slate-600">
-                        Consumo: <strong>{comparativo.consumo_referencia_kwh} kWh/mês</strong> ({comparativo.consumo_diario_kwh} kWh/dia) · HSP: <strong>{comparativo.hsp} h/dia</strong> (PR: 78%) · Tarifa: <strong>R$ {tarifaKwh.toFixed(2)}/kWh</strong>
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        Consumo: <strong>{comparativo.consumo_referencia_kwh} kWh/mês</strong> ({comparativo.consumo_diario_kwh} kWh/dia) · Demanda Média: <strong>{comparativo.demanda_media_kw} kW</strong> · Cargas Residência (est.): <strong>{comparativo.potencia_instalada_estimada_kw} kW</strong>
+                      </p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        HSP: <strong>{comparativo.hsp} h/dia</strong> · {comparativo.pr_justificativa}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-[11px] text-slate-500 block">Energia Compensável</span>
-                    <span className="text-sm font-black text-slate-800">
+                    <span className="text-[11px] text-slate-500 block">Compensação Mensal</span>
+                    <span className="text-sm font-black text-emerald-800">
                       {gridTie.economia.energia_compensada_kwh} kWh/mês
                     </span>
+                    {gridTie.economia.energia_excedente_kwh > 0 && (
+                      <span className="text-[10px] text-blue-600 font-semibold block">
+                        +{gridTie.economia.energia_excedente_kwh} kWh excedente (créditos)
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -483,8 +491,8 @@ export const SolarModal: React.FC<SolarModalProps> = ({
                     {/* Especificações Técnicas */}
                     <div className="space-y-2 text-xs">
                       <div className="flex justify-between py-1 border-b border-slate-50">
-                        <span className="text-slate-500">Potência Instalada:</span>
-                        <span className="font-bold text-slate-900">{gridTie.potencia_instalada_kwp} kWp</span>
+                        <span className="text-slate-500">Potência FV Instalada:</span>
+                        <span className="font-bold text-slate-900">{gridTie.potencia_instalada_kwp} kWp (Nec: {gridTie.potencia_fv_necessaria_kwp} kWp)</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-slate-50">
                         <span className="text-slate-500">Módulos FV:</span>
@@ -499,19 +507,25 @@ export const SolarModal: React.FC<SolarModalProps> = ({
                         </span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-slate-50">
-                        <span className="text-slate-500">Fator Dimensionamento (FDI):</span>
-                        <span className="font-semibold text-slate-800">{gridTie.inversor.fator_dimensionamento}x</span>
+                        <span className="text-slate-500">Razão CC/CA (R_DC/AC / FDI):</span>
+                        <span className="font-semibold text-slate-800">{gridTie.inversor.razao_dc_ac || gridTie.inversor.fator_dimensionamento}x (P_FV / P_inv)</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-slate-50">
-                        <span className="text-slate-500">Geração Mensal Estimada:</span>
-                        <span className="font-bold text-emerald-700">{gridTie.geracao_estimada_mensal_kwh} kWh/mês</span>
+                        <span className="text-slate-500">Geração Estimada:</span>
+                        <span className="font-bold text-emerald-700">{gridTie.geracao_estimada_mensal_kwh} kWh/mês ({gridTie.geracao_estimada_diaria_kwh} kWh/dia)</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-slate-50">
                         <span className="text-slate-500">Atendimento da Demanda:</span>
                         <span className="font-bold text-emerald-700">{gridTie.percentual_atendimento_pct}%</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-slate-50">
-                        <span className="text-slate-500">Armazenamento:</span>
+                        <span className="text-slate-500">Energia Compensada / Excedente:</span>
+                        <span className="font-semibold text-slate-800">
+                          {gridTie.economia.energia_compensada_kwh} kWh compensados {gridTie.economia.energia_excedente_kwh > 0 ? `(+${gridTie.economia.energia_excedente_kwh} kWh créditos)` : ''}
+                        </span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-slate-50">
+                        <span className="text-slate-500">Armazenamento por Baterias:</span>
                         <span className="text-slate-400 italic">Não incluído (injetado na rede)</span>
                       </div>
                     </div>
@@ -584,8 +598,8 @@ export const SolarModal: React.FC<SolarModalProps> = ({
                     {/* Especificações Técnicas */}
                     <div className="space-y-2 text-xs">
                       <div className="flex justify-between py-1 border-b border-slate-50">
-                        <span className="text-slate-500">Potência Instalada:</span>
-                        <span className="font-bold text-slate-900">{hibrido.potencia_instalada_kwp} kWp</span>
+                        <span className="text-slate-500">Potência FV Instalada:</span>
+                        <span className="font-bold text-slate-900">{hibrido.potencia_instalada_kwp} kWp (Nec: {hibrido.potencia_fv_necessaria_kwp} kWp)</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-slate-50">
                         <span className="text-slate-500">Módulos FV:</span>
@@ -600,12 +614,22 @@ export const SolarModal: React.FC<SolarModalProps> = ({
                         </span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-slate-50">
-                        <span className="text-slate-500">Fator Dimensionamento (FDI):</span>
-                        <span className="font-semibold text-slate-800">{hibrido.inversor.fator_dimensionamento}x</span>
+                        <span className="text-slate-500">Razão CC/CA (R_DC/AC / FDI):</span>
+                        <span className="font-semibold text-slate-800">{hibrido.inversor.razao_dc_ac || hibrido.inversor.fator_dimensionamento}x (P_FV / P_inv)</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-slate-50">
-                        <span className="text-slate-500">Geração Mensal Estimada:</span>
-                        <span className="font-bold text-slate-900">{hibrido.geracao_estimada_mensal_kwh} kWh/mês</span>
+                        <span className="text-slate-500">Geração Estimada:</span>
+                        <span className="font-bold text-slate-900">{hibrido.geracao_estimada_mensal_kwh} kWh/mês ({hibrido.geracao_estimada_diaria_kwh} kWh/dia)</span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-slate-50">
+                        <span className="text-slate-500">Atendimento da Demanda:</span>
+                        <span className="font-bold text-slate-900">{hibrido.percentual_atendimento_pct}%</span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-slate-50">
+                        <span className="text-slate-500">Energia Compensada / Excedente:</span>
+                        <span className="font-semibold text-slate-800">
+                          {hibrido.economia.energia_compensada_kwh} kWh compensados {hibrido.economia.energia_excedente_kwh > 0 ? `(+${hibrido.economia.energia_excedente_kwh} kWh créditos)` : ''}
+                        </span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-slate-50">
                         <span className="text-slate-500">Banco de Baterias:</span>

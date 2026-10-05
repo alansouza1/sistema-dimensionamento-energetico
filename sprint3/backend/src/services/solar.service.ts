@@ -91,6 +91,16 @@ export class SolarService {
     const summary = ConsumptionService.getSummary(input.property_id, userId);
     const consumoRef = summary.consumo_medio > 0 ? summary.consumo_medio : 350; // Fallback caso não haja faturas registradas ainda
 
+    if (input.hsp !== undefined && input.hsp <= 0) {
+      throw new Error('A Radiação Solar (HSP) deve ser maior que zero.');
+    }
+    if (input.pr !== undefined && (input.pr <= 0 || input.pr > 1)) {
+      throw new Error('O Fator Global de Desempenho (PR) deve estar entre 0 e 1 (ex: 0.78 para 78%).');
+    }
+    if (input.percentual_atendimento !== undefined && input.percentual_atendimento <= 0) {
+      throw new Error('O percentual de atendimento deve ser positivo.');
+    }
+
     const percentual = input.percentual_atendimento && input.percentual_atendimento > 0 
       ? input.percentual_atendimento 
       : 100;
@@ -100,7 +110,7 @@ export class SolarService {
     const hsp = input.hsp && input.hsp > 0 ? input.hsp : 4.5;
     const origemHsp = input.origem_hsp || 'Atlas Solarimétrico Brasileiro (CRESESB / INPE) - Média Sudeste';
     const dias = 30;
-    const rendimentoGlobal = 0.78; // Performance Ratio (PR) adotado
+    const rendimentoGlobal = input.pr && input.pr > 0 ? input.pr : 0.78; // Performance Ratio (PR) adotado
 
     // 1. Energia mensal que se pretende gerar (kWh)
     const energiaMensal = Math.round((consumoRef * fatorAtendimento) * 100) / 100;
@@ -241,8 +251,9 @@ export class SolarService {
       };
     }
 
-    // 6. Geração Estimada Mensal
+    // 6. Geração Estimada Mensal e Diária
     const geracaoEstimadaMensal = Math.round((potenciaInstaladaKwp * hsp * dias * rendimentoGlobal) * 100) / 100;
+    const geracaoEstimadaDiaria = Math.round((potenciaInstaladaKwp * hsp * rendimentoGlobal) * 100) / 100;
 
     // 7. Orçamento
     const custoModulos = quantidadeModulos * moduloEscolhido.preco_brl;
@@ -259,6 +270,7 @@ export class SolarService {
       energia_mensal_gerar_kwh: energiaMensal,
       hsp,
       origem_hsp: origemHsp,
+      pr: rendimentoGlobal,
       potencia_fv_necessaria_kwp: potenciaFvNecessariaKwp,
       potencia_instalada_kwp: potenciaInstaladaKwp,
       modulo: {
@@ -270,9 +282,11 @@ export class SolarService {
         quantidade: 1,
         equipamento: inversorEscolhido,
         fator_dimensionamento: fatorDimensionamento,
+        razao_dc_ac: fatorDimensionamento,
       },
       armazenamento: armazenamentoResultado,
       geracao_estimada_mensal_kwh: geracaoEstimadaMensal,
+      geracao_estimada_diaria_kwh: geracaoEstimadaDiaria,
       orcamento: {
         custo_modulos_brl: custoModulos,
         custo_inversor_brl: custoInversor,
@@ -287,6 +301,8 @@ export class SolarService {
   private static calcularEconomia(consumoRef: number, geracaoMensal: number, investimentoTotal: number, tarifaKwh: number): AnaliseEconomica {
     // E_compensada = min(geração, consumo)
     const energiaCompensada = Math.round(Math.min(geracaoMensal, consumoRef) * 100) / 100;
+    // E_excedente = max(0, geração - consumo) - créditos junto à concessionária
+    const energiaExcedente = Math.round(Math.max(0, geracaoMensal - consumoRef) * 100) / 100;
     // Economia_mensal = E_compensada * tarifa
     const economiaMensal = Math.round(energiaCompensada * tarifaKwh * 100) / 100;
     const economiaAnual = Math.round(economiaMensal * 12 * 100) / 100;
@@ -297,6 +313,7 @@ export class SolarService {
     return {
       tarifa_kwh: tarifaKwh,
       energia_compensada_kwh: energiaCompensada,
+      energia_excedente_kwh: energiaExcedente,
       economia_mensal_brl: economiaMensal,
       economia_anual_brl: economiaAnual,
       payback_anos: paybackAnos,
@@ -308,9 +325,11 @@ export class SolarService {
   public static dimensionarComparativo(userId: number, input: DimensionamentoSolarInput): PropostaComparativa {
     // Validate inputs
     if (input.hsp !== undefined && input.hsp <= 0) throw new Error('HSP deve ser maior que zero.');
+    if (input.pr !== undefined && (input.pr <= 0 || input.pr > 1)) throw new Error('O Fator Global de Desempenho (PR) deve estar entre 0 e 1 (ex: 0.78 para 78%).');
     if (input.percentual_atendimento !== undefined && input.percentual_atendimento <= 0) throw new Error('Percentual de atendimento deve ser positivo.');
     if (input.tarifa_kwh !== undefined && input.tarifa_kwh <= 0) throw new Error('Tarifa de energia deve ser positiva.');
 
+    const pr = input.pr && input.pr > 0 ? input.pr : 0.78;
     const tarifaKwh = input.tarifa_kwh !== undefined ? input.tarifa_kwh : 0.85;
     
     // Get property info
@@ -318,7 +337,7 @@ export class SolarService {
     if (!property) throw new Error('Imóvel não encontrado ou não pertence ao usuário.');
     
     // Cenário 1: Grid-Tie (sem baterias)
-    const inputGridTie = { ...input, com_armazenamento: false };
+    const inputGridTie = { ...input, pr, com_armazenamento: false };
     const propostaGridTie = this.dimensionar(userId, inputGridTie);
     const economiaGridTie = this.calcularEconomia(
       propostaGridTie.consumo_referencia_kwh,
@@ -328,7 +347,7 @@ export class SolarService {
     );
     
     // Cenário 2: Híbrido (com baterias)
-    const inputHibrido = { ...input, com_armazenamento: true, horas_autonomia: input.horas_autonomia || 12 };
+    const inputHibrido = { ...input, pr, com_armazenamento: true, horas_autonomia: input.horas_autonomia || 12 };
     const propostaHibrido = this.dimensionar(userId, inputHibrido);
     const economiaHibrido = this.calcularEconomia(
       propostaHibrido.consumo_referencia_kwh,
@@ -338,14 +357,21 @@ export class SolarService {
     );
     
     const consumoDiario = Math.round((propostaGridTie.consumo_referencia_kwh / 30) * 100) / 100;
+    const demandaMedia = Math.round((consumoDiario / 24) * 100) / 100;
+    // Estimativa de potência instalada da residência (cargas): demanda média dividida pelo fator de carga residencial típico de 0,30
+    const potenciaInstaladaEstimada = Math.round((consumoDiario / (24 * 0.30)) * 10) / 10;
+    const prJustificativa = `Performance Ratio (PR) adotado de ${(pr * 100).toFixed(0)}% (${pr}) conforme ABNT NBR 16690 e literatura CRESESB. Considera perdas térmicas nos módulos (~10-12%), perdas por sujidade/poeira (~3-5%), cabeamento CC/CA (~2-3%) e rendimento do inversor (~2-3%).`;
     
     return {
       imovel: { id: property.id, identificacao: property.identificacao, endereco: property.endereco },
       consumo_referencia_kwh: propostaGridTie.consumo_referencia_kwh,
       consumo_diario_kwh: consumoDiario,
+      demanda_media_kw: demandaMedia,
+      potencia_instalada_estimada_kw: potenciaInstaladaEstimada,
       hsp: propostaGridTie.hsp,
       origem_hsp: propostaGridTie.origem_hsp,
-      pr: 0.78,
+      pr: pr,
+      pr_justificativa: prJustificativa,
       cenario_grid_tie: { ...propostaGridTie, economia: economiaGridTie },
       cenario_hibrido: { ...propostaHibrido, economia: economiaHibrido },
     };

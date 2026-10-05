@@ -52,6 +52,7 @@ export interface Bateria {
 export interface DimensionamentoInput {
   property_id: number;
   hsp?: number;
+  pr?: number;
   percentual_atendimento?: number;
   com_armazenamento?: boolean;
   horas_autonomia?: number;
@@ -65,6 +66,7 @@ export interface DimensionamentoInput {
 export interface AnaliseEconomica {
   tarifa_kwh: number;
   energia_compensada_kwh: number;
+  energia_excedente_kwh: number;
   economia_mensal_brl: number;
   economia_anual_brl: number;
   payback_anos: number;
@@ -78,6 +80,7 @@ export interface PropostaSolar {
   energia_mensal_gerar_kwh: number;
   hsp: number;
   origem_hsp: string;
+  pr: number;
   potencia_fv_necessaria_kwp: number;
   potencia_instalada_kwp: number;
   modulo: {
@@ -89,6 +92,7 @@ export interface PropostaSolar {
     quantidade: number;
     equipamento: Inversor;
     fator_dimensionamento: number;
+    razao_dc_ac: number;
   };
   armazenamento: {
     incluido: boolean;
@@ -101,6 +105,7 @@ export interface PropostaSolar {
     equipamento: Bateria | null;
   };
   geracao_estimada_mensal_kwh: number;
+  geracao_estimada_diaria_kwh: number;
   orcamento: {
     custo_modulos_brl: number;
     custo_inversor_brl: number;
@@ -116,9 +121,12 @@ export interface PropostaComparativa {
   imovel: { id: number; identificacao: string; endereco: string };
   consumo_referencia_kwh: number;
   consumo_diario_kwh: number;
+  demanda_media_kw: number;
+  potencia_instalada_estimada_kw: number;
   hsp: number;
   origem_hsp: string;
   pr: number;
+  pr_justificativa: string;
   cenario_grid_tie: PropostaSolar & { economia: AnaliseEconomica };
   cenario_hibrido: PropostaSolar & { economia: AnaliseEconomica };
 }

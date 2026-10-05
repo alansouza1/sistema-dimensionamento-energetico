@@ -87,11 +87,9 @@ export const EnergyKpiCards: React.FC<EnergyKpiCardsProps> = ({ summary, isLoadi
           </span>
           <span className="text-xs font-semibold text-slate-500">kWh/mês</span>
         </div>
-        <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
-          <div className="p-1 rounded-md bg-cyan-100 text-cyan-700">
-            <BarChart3 className="w-3.5 h-3.5" />
-          </div>
-          <span>Média aritmética global</span>
+        <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600">
+          <span>Diário: <strong>{summary ? (Number(summary.consumo_medio) / 30).toFixed(2) : '0.00'} kWh/dia</strong></span>
+          <span>Demanda: <strong>{summary ? (Number(summary.consumo_medio) / 720).toFixed(2) : '0.00'} kW</strong></span>
         </div>
       </div>
 

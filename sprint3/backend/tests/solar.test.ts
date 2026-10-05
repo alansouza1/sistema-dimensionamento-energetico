@@ -207,6 +207,13 @@ describe('Sprint 2 — Sistema Fotovoltaico & Orçamento', () => {
       expect(proposta.cenario_hibrido.economia).toBeDefined();
       expect(proposta.cenario_grid_tie.orcamento.custo_total_estimado_brl)
         .toBeLessThan(proposta.cenario_hibrido.orcamento.custo_total_estimado_brl);
+
+      // Verificação de novos indicadores (PB02, PB03, PB07, PB08)
+      expect(proposta.demanda_media_kw).toBeGreaterThan(0);
+      expect(proposta.potencia_instalada_estimada_kw).toBeGreaterThan(0);
+      expect(proposta.pr_justificativa).toContain('Performance Ratio');
+      expect(proposta.cenario_grid_tie.geracao_estimada_diaria_kwh).toBeGreaterThan(0);
+      expect(proposta.cenario_grid_tie.inversor.razao_dc_ac).toBeGreaterThan(0);
     });
   });
 
@@ -225,6 +232,8 @@ describe('Sprint 2 — Sistema Fotovoltaico & Orçamento', () => {
       const ecoHib = proposta.cenario_hibrido.economia;
       
       expect(ecoGT.tarifa_kwh).toBe(tarifaKwh);
+      expect(ecoGT.energia_compensada_kwh).toBeGreaterThan(0);
+      expect(ecoGT.energia_excedente_kwh).toBeGreaterThanOrEqual(0);
       expect(ecoGT.economia_mensal_brl).toBeGreaterThan(0);
       expect(ecoGT.economia_anual_brl).toBeCloseTo(ecoGT.economia_mensal_brl * 12, 1);
       
@@ -236,12 +245,20 @@ describe('Sprint 2 — Sistema Fotovoltaico & Orçamento', () => {
   });
 
   describe('PB18 — Validação de dados', () => {
-    it('deve lançar erro para HSP <= 0, percentual negativo ou tarifa inválida', () => {
+    it('deve lançar erro para HSP <= 0, percentual negativo, PR inválido ou tarifa inválida', () => {
       const user = db.prepare('SELECT id FROM usuarios LIMIT 1').get() as any;
       
       expect(() => {
         SolarService.dimensionarComparativo(user.id, { property_id: propertyId, hsp: 0, tarifa_kwh: 0.85 });
       }).toThrow('HSP deve ser maior que zero.');
+
+      expect(() => {
+        SolarService.dimensionarComparativo(user.id, { property_id: propertyId, hsp: 4.5, pr: 0, tarifa_kwh: 0.85 });
+      }).toThrow('O Fator Global de Desempenho (PR) deve estar entre 0 e 1');
+
+      expect(() => {
+        SolarService.dimensionarComparativo(user.id, { property_id: propertyId, hsp: 4.5, pr: 1.5, tarifa_kwh: 0.85 });
+      }).toThrow('O Fator Global de Desempenho (PR) deve estar entre 0 e 1');
 
       expect(() => {
         SolarService.dimensionarComparativo(user.id, { property_id: propertyId, hsp: 4.5, percentual_atendimento: -10, tarifa_kwh: 0.85 });
