@@ -1,0 +1,9 @@
+id,fabricante,modelo,tecnologia,tensao_nominal_v,capacidade_ah,capacidade_kwh,dod_pct,ciclos,preco_brl,fornecedor,data_coleta,url_fonte
+BAT001,Pylontech,US2000C,LiFePO4,48,50,2.40,95,6000,5890.00,NeoSolar,2026-10-02,https://www.neosolar.com.br/bateria-litio-pylontech-us2000c
+BAT002,Pylontech,US3000C,LiFePO4,48,74,3.55,95,6000,7990.00,Minha Casa Solar,2026-10-02,https://www.minhacasasolar.com.br/bateria-litio-pylontech-us3000c
+BAT003,Pylontech,US5000,LiFePO4,48,100,4.80,95,6000,9990.00,Portal Solar,2026-10-02,https://loja.portalsolar.com.br/bateria-litio-pylontech-us5000
+BAT004,Deye,SE-G5.1 Pro,LiFePO4,51.2,100,5.12,90,6000,10450.00,NeoSolar,2026-10-02,https://www.neosolar.com.br/bateria-litio-deye-5-12kwh
+BAT005,Deye,BOS-G,LiFePO4,51.2,100,5.12,90,6000,11800.00,Aldo Solar,2026-10-02,https://www.aldosolar.com.br/bateria-deye-bos-g
+BAT006,Unipower,UP12200,Chumbo-Acido AGM,12,200,2.40,50,600,1850.00,Minha Casa Solar,2026-10-02,https://www.minhacasasolar.com.br/bateria-estacionaria-unipower-200ah
+BAT007,Moura,Moura Solar 12MS234,Chumbo-Acido Ventilada,12,220,2.64,50,1500,1950.00,Portal Solar,2026-10-02,https://loja.portalsolar.com.br/bateria-estacionaria-moura-220ah
+BAT008,Growatt,ARK-2.5L-A1,LiFePO4,51.2,50,2.56,90,6000,5600.00,Minha Casa Solar,2026-10-02,https://www.minhacasasolar.com.br/bateria-litio-growatt-ark-2-5kwh
