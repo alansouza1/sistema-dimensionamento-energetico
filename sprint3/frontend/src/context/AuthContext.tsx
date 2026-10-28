@@ -44,24 +44,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
           const currentUser = await authService.getMe();
           setUser(currentUser);
+          setIsLoading(false);
+          return;
         } catch {
-          // If token invalid, fall back to stored user or clear
-          const fallbackUser = getStoredUser();
-          if (fallbackUser) {
-            setUser(fallbackUser);
-          }
+          setStoredToken(null);
+          setStoredUser(null);
+          setUser(null);
+          setToken(null);
         }
-      } else {
-        // Pre-initialize demo user so the app is immediately testable
+      }
+
+      // Auto-authenticate with seeded demo user if backend is accessible
+      try {
+        const response = await authService.login({ email: 'alan@fiap.com.br', senha: '123' });
+        setUser(response.usuario);
+        setToken(response.token);
+      } catch {
+        // Fallback for offline/simulated mode
         const demoUser: User = {
           id: 1,
           nome: 'Alan Souza',
           email: 'alan@fiap.com.br',
         };
         setUser(demoUser);
-        setToken('demo-token-sers');
+        setToken(null);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     initAuth();

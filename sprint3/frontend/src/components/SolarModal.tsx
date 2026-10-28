@@ -3,6 +3,7 @@ import { Property } from '../types/property';
 import { EnergySummary } from '../types/consumption';
 import { PropostaComparativa, PropostaSalva } from '../types/solar';
 import { solarService } from '../services/solarService';
+import { authService } from '../services/authService';
 import {
   Sun,
   BatteryCharging,
@@ -291,9 +292,29 @@ export const SolarModal: React.FC<SolarModalProps> = ({
         <div className="overflow-y-auto p-6 space-y-6 flex-1 print:overflow-visible print:p-0 print:space-y-4">
           {/* Notifications */}
           {erro && (
-            <div className="p-3.5 rounded-xl bg-red-50 text-red-700 text-xs border border-red-200 flex items-center gap-2 no-print">
-              <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
-              <span>{erro}</span>
+            <div className="p-3.5 rounded-xl bg-red-50 text-red-700 text-xs border border-red-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 no-print">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+                <span>{erro}</span>
+              </div>
+              {(erro.includes('Token') || erro.includes('autorizado') || erro.includes('autenticado')) && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await authService.login({ email: 'alan@fiap.com.br', senha: '123' });
+                      setErro(null);
+                      await handleCalcular();
+                      await carregarPropostasSalvas();
+                    } catch (e: any) {
+                      setErro(e.message || 'Erro ao reconectar conta demo.');
+                    }
+                  }}
+                  className="px-3 py-1.5 text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 rounded-lg shrink-0 transition-colors shadow-2xs"
+                >
+                  Autenticar Conta Demo & Calcular
+                </button>
+              )}
             </div>
           )}
           {sucesso && (

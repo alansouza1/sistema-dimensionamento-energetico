@@ -8,7 +8,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "vitest run"
+    "test": "DATABASE_FILE=test.sqlite vitest run"
   },
   "keywords": [
     "fiap",

@@ -227,6 +227,9 @@ export async function apiRequest<T>(
     clearTimeout(timeoutId);
 
     if (!response.ok) {
+      if (response.status === 401) {
+        setStoredToken(null);
+      }
       const errBody = await response.json().catch(() => ({}));
       const message = errBody.mensagem || errBody.message || `Erro HTTP ${response.status}`;
       throw new Error(message);
