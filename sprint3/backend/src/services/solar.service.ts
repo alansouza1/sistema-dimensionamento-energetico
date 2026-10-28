@@ -396,12 +396,12 @@ export class SolarService {
 
   public static listarPropostas(userId: number, propertyId: number): PropostaSalva[] {
     const stmt = db.prepare('SELECT * FROM propostas_solar WHERE property_id = ? AND user_id = ? ORDER BY data_criacao DESC');
-    return stmt.all(propertyId, userId) as PropostaSalva[];
+    return stmt.all(propertyId, userId) as unknown as PropostaSalva[];
   }
 
   public static obterProposta(userId: number, propostaId: number): PropostaSalva | undefined {
     const stmt = db.prepare('SELECT * FROM propostas_solar WHERE id = ? AND user_id = ?');
-    return stmt.get(propostaId, userId) as PropostaSalva | undefined;
+    return stmt.get(propostaId, userId) as unknown as PropostaSalva | undefined;
   }
 
   public static excluirProposta(userId: number, propostaId: number): boolean {
