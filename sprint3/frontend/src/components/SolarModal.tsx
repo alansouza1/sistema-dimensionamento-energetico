@@ -156,7 +156,11 @@ export const SolarModal: React.FC<SolarModalProps> = ({
 
   // Print proposal
   const handleImprimir = () => {
-    window.print();
+    if (!comparativo) return;
+    setActiveTab('comparativo');
+    setTimeout(() => {
+      window.print();
+    }, 150);
   };
 
   useEffect(() => {
@@ -176,25 +180,54 @@ export const SolarModal: React.FC<SolarModalProps> = ({
       {/* Print Styles */}
       <style>{`
         @media print {
-          body * {
-            visibility: hidden;
+          @page {
+            size: A4 portrait;
+            margin: 10mm;
           }
-          #solar-print-area, #solar-print-area * {
-            visibility: visible;
+          html, body {
+            background: white !important;
+            color: #0f172a !important;
+            height: auto !important;
+            overflow: visible !important;
+          }
+          /* Hide all application background content */
+          #app-navbar, main, footer, #api-settings-popover, #toast-container {
+            display: none !important;
+          }
+          /* Modal container acts as full normal document */
+          .fixed.inset-0 {
+            position: static !important;
+            inset: auto !important;
+            background: transparent !important;
+            padding: 0 !important;
+            display: block !important;
+            overflow: visible !important;
+            width: 100% !important;
+            height: auto !important;
           }
           #solar-print-area {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            margin: 0;
-            padding: 20px;
-            background: white !important;
+            position: static !important;
+            width: 100% !important;
+            max-width: 100% !important;
             box-shadow: none !important;
-            border: none !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            overflow: visible !important;
+            max-height: none !important;
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          #solar-print-area * {
+            overflow: visible !important;
+            max-height: none !important;
           }
           .no-print {
             display: none !important;
+          }
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
         }
       `}</style>
@@ -222,8 +255,9 @@ export const SolarModal: React.FC<SolarModalProps> = ({
           <div className="flex items-center gap-2 no-print">
             <button
               onClick={handleImprimir}
+              disabled={!comparativo || loading}
               title="Exportar Proposta / Imprimir em PDF (PB21)"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors shadow-2xs"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors shadow-2xs disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Printer className="w-3.5 h-3.5 text-slate-600" />
               <span>Imprimir / PDF</span>
